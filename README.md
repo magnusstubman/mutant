@@ -26,10 +26,14 @@ Mutation operators to begin with
 * ABS: Absolute value insertion
 * ROR: Relational operator replacement
 
-
 Operators to use later
 ----------------------
 
 * LCR: Logical connector replacement
 * UOI: Unary operator insertion
 * AOR: Arithmetic operator replacement
+
+Research needed
+---------------
+
+* How many mutants whould be generated?
