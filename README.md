@@ -10,12 +10,12 @@ Idea
 
 prerequisite: user specified SUT and a test suite, which the SUT passes.
 
-1. Use acorn.js to generate a AST from SUT
-2. Walk the generated AST with acorn.js' walker until a candidate AST node for a mutation operator is found
+1. Use [acorn.js](//github.com/marijnh/acorn) to generate a AST from SUT
+2. Walk the generated AST with [acorn.js' walker](//github.com/marijnh/acorn/blob/master/util/walk.js) until a candidate AST node for a mutation operator is found
 3. Check history/log if the candidate/operator pair has been mutated before - if so go to step 2
 3. Mutate the candidate AST node
 4. Record the candidate/operator pair in some history/log
-5. Generate SUT' (now called mutant) from the AST with library X
+5. Generate SUT' (now called mutant) from the AST with [escodegen](//github.com/Constellation/escodegen)
 6. Save the mutant temporarily
 7. go to step 2 until sufficient amount of mutants have been created
 8. Run test suite against all mutants, report those mutants which passed all tests
