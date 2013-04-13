@@ -36,4 +36,4 @@ Operators to use later
 Research needed
 ---------------
 
-* How many mutants whould be generated?
+* How many mutants whould needs to be generated?
