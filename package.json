@@ -1,0 +1,23 @@
+{
+  "name": "mutant",
+  "version": "0.0.1",
+  "author": "Magnus Stubman <magnus@stubman.eu>",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/magnusstubman/mutant.git"
+  },
+  "keywords": [],
+  "dependencies": {
+    "clone": "~0.1.6",
+    "acorn": "~0.1.0",
+    "optimist": "~0.3.7",
+    "path": "~0.4.9",
+    "escodegen": "0.0.20"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10.4",
+    "npm": ">=1.2.18"
+  }
+}
