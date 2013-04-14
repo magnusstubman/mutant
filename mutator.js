@@ -15,7 +15,6 @@ exports.mutate = function (node, callback) {
 exports.mutatables = function (node) {
   switch(getMutatable(node)) {
     case 'relational':
-      debugger;
       return mutateMap[node.operator].length;
   }
 
