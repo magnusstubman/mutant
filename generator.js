@@ -5,6 +5,7 @@ var argv = require('optimist').argv;
 var fs = require('fs');
 var acorn = require('acorn');
 var escodegen = require('escodegen');
+var clone = require('clone');
 var walk = require(path.join(path.dirname(require.resolve('acorn')), path.join('util', 'walk.js')));
 var mutator = require('./mutator');
 
@@ -13,7 +14,7 @@ if ((typeof argv.input === 'undefined') || (typeof argv.output === 'undefined'))
   usage += 'use the \'--output\' argument to specify output folder for mutants';
 
   console.log(usage);
-  process.exit();
+  process.exit(-1);
 }
 
 try {
@@ -31,15 +32,15 @@ try {
 } catch (e) {
   if (e.code === 'ENOENT') {
     console.log('input file not found!');
-    process.exit();
+    process.exit(-1);
   } else {
     throw e;
   }
 }
 
 
-console.log('input:');
-console.log(inputContents);
+// console.log('input:');
+// console.log(inputContents);
 
 var count = 0;
 
@@ -54,24 +55,30 @@ walk.simple(ast, {
 
 console.log(count + ' mutatable nodes found');
 
+var i = 0;
+var ast = acorn.parse(inputContents);
 
-mutator.clear();
+walk.simple(ast, {
+  Expression: function (node) {
+    mutator.mutate(node, function () {
+      i++;
 
-for (var i = 0; i < count; i++) {
-  var ast = acorn.parse(inputContents);
+      var mutant = escodegen.generate(ast);
 
-  walk.simple(ast, {
-    Expression: function (node) {
-      mutator.mutate(node)
-    }
-  });
+      var zeroes = (new Array(((count.toString().length - i.toString().length)) + 1)).join("0")
 
-  mutator.next();
+      var outputPath = path.join(argv.output, 'mutant' + zeroes + i + '.js');
+    
+      console.log('Writing ' + outputPath);
 
-  var mutant = escodegen.generate(ast);
+      fs.writeFileSync(outputPath, mutant, 'utf8');
+    })
+  }
+});
 
-  var zeroes = (new Array(((count.toString().length - (i+1).toString().length)) + 1)).join("0")
+var mutant = escodegen.generate(ast);
 
-  var outputPath = path.join(argv.output, 'mutant' + zeroes + (i+1) + '.js');
-  fs.writeFileSync(outputPath, mutant, 'utf8');
-}
+var zeroes = (new Array(((count.toString().length - (i+1).toString().length)) + 1)).join("0")
+
+var outputPath = path.join(argv.output, 'mutant' + zeroes + (i+1) + '.js');
+fs.writeFileSync(outputPath, mutant, 'utf8');

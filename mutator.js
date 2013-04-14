@@ -1,70 +1,45 @@
 var clone = require('clone');
-var escodegen = require('escodegen');
 
 var relationalOperators = ['==', '!=', '===', '!==', '>', '>=', '<', '<='];
 
-var mutations;
-var skip;
-var calls;
-var index;
-var hasMutated;
+var mutations = 0;
 
-exports.clear = function () {
-  mutations = 0;
-  calls = 0;
-  skip = 0;
-  index = 0;
-  hasMutated = false;
-};
-exports.clear();
-
-exports.next = function () {
-  calls = 0;
-  hasMutated = false;
-};
-
-exports.mutate = function (node) {
-  calls++;
-
-  if ((calls <= skip) || (hasMutated)) {
-    return;
-  }
-
+exports.mutate = function (node, callback) {
   switch(getMutatable(node)) {
     case 'relational':
-      mutations++;
-      return mutateRelational(node);
+      mutateRelational(node, callback);
+      break;
   }  
 };
 
 exports.mutatables = function (node) {
   switch(getMutatable(node)) {
     case 'relational':
+      debugger;
       return mutateMap[node.operator].length;
   }
 
   return 0;
 };
 
-var mutateRelational = function (node) {
-  if (index === mutateMap[node.operator].length) {
-    skip = calls;
-    index = 0;
-  } else {
+var mutateRelational = function (node, callback) {
+  var original = node.operator;
 
-    var str = mutations + " Mutating: " + escodegen.generate(node);
-
-    node.operator = mutateMap[node.operator][index];
-    hasMutated = true;
-    index++;
-
-    str += " to: " + escodegen.generate(node);
-    console.log(str);
+  for (var i = 0; i < mutateMap[node.operator].length; i++) {
+    mutations++;
+    node.operator = mutateMap[node.operator][i];
+    callback();
+    node.operator = original;
   }
 };
 
 var isRelationalExpression = function (node) {
+
   if (!node.operator) {
+    return false;
+  }
+
+  if (node.type !== 'BinaryExpression') {
     return false;
   }
 
